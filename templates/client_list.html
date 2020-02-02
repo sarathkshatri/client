@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Clients{% endblock title %}
+
+{% block content %}
+  {% if request.user.is_superuser %}
+    {% for client in object_list %}
+        <div class="card">
+          <div class="card-header">
+            <a href="{% url 'client_detail' client.pk %}">{{ client.name }}</a>
+            <span class="font-weight-bold">cell: {{ client.cell_phone }} | </span>
+            <span class="font-weight-bold">acct: {{ client.acct_number }} | </span>
+            <span class="font-muted">addr: {{ client.address }} | </span>
+            <span class="font-muted-">city: {{ client.city }} | </span>
+            <span class="font-muted">st: {{ client.state }} | </span>
+            <span class="font-muted">zip: {{ client.zipcode }} | </span>
+            <span class="font-muted">email: {{ client.email }} | </span>
+          </div>
+          <div class="card-body">
+            <p>{{client.notes}}</p>
+            {% if client.author == user %}
+              <a href="{% url 'client_edit' client.pk %}">Edit</a> |
+              <a href="{% url 'client_delete' client.pk %}">Delete</a>
+            {% endif %}
+            <div>
+              <a href="{% url 'client_detail' client.pk %}">Total Number of Comments: {{ client.comments.count }}</a>
+            </div>
+          </div>
+          <div class="card-footer">
+            {% for comment in client.comments.all %}
+              <p>
+                 <span class="font-weight-bold">{{ comment.author }} &middot;</span>
+                  <span class="font-muted">{{ comment.comment }}</span>
+              </p>
+            {% endfor %}
+          </div>
+        </div>
+        <br />
+    {% endfor %}
+  {% else %}
+      {% for client in object_list %}
+        {% if client.author == request.user %}
+          <div class="card">
+            <div class="card-header">
+              <a href="{% url 'client_detail' client.pk %}">{{ client.name }}</a>
+              <span class="font-weight-bold">cell: {{ client.cell_phone }} | </span>
+              <span class="font-weight-bold">acct: {{ client.acct_number }} | </span>
+              <span class="font-muted">addr: {{ client.address }} | </span>
+              <span class="font-muted-">city: {{ client.city }} | </span>
+              <span class="font-muted">st: {{ client.state }} | </span>
+              <span class="font-muted">zip: {{ client.zipcode }} | </span>
+              <span class="font-muted">email: {{ client.email }} | </span>
+            </div>
+            <div class="card-body">
+              <p>{{client.notes}}</p>
+              <a href="{% url 'client_edit' client.pk %}">Edit</a> |
+              <a href="{% url 'client_delete' client.pk %}">Delete</a>
+              <div>
+                <a href="{% url 'client_detail' client.pk %}">Total Number of Comments: {{ client.comments.count }}</a>
+              </div>
+            </div>
+            <div class="card-footer">
+              {% for comment in client.comments.all %}
+                <p>
+                   <span class="font-weight-bold">{{ comment.author }} &middot;</span>
+                    <span class="font-muted">{{ comment.comment }}</span>
+                </p>
+              {% endfor %}
+            </div>
+          </div>
+          <br />
+        {% endif %}
+      {% endfor %}
+
+  {% endif  %}
+{% endblock content %}
